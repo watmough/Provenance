@@ -1,0 +1,3 @@
+Drag and drop a set of mail headers onto this application, and we'll do our best to identify as much information as we can!
+
+Drop mail headers.
