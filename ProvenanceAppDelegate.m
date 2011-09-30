@@ -13,6 +13,7 @@
 @implementation ProvenanceAppDelegate
 
 @synthesize mailText;
+@synthesize contextLines;
 @synthesize addresses;
 @synthesize info;
 
@@ -30,6 +31,7 @@
 	lookup = [[comDotMelissaData alloc] init];
 	
 	// setup table view
+	contextLines = [[NSMutableDictionary alloc] init];
 	addresses = [[NSMutableArray alloc] init];
 	info = [[NSMutableArray alloc] init];
 	[tableView setDataSource:self];
@@ -71,9 +73,10 @@
 							[attributes objectForKey:@"State or Region"],
 							[attributes objectForKey:@"Country"]];
 	
-	// populate table view
-	[addresses addObject:address];
-	[info      addObject:infoString];
+	// populate appropriate row of table view
+	NSInteger index = [addresses indexOfObject:address];
+	[info replaceObjectAtIndex:index withObject:[NSString stringWithFormat:@"%@\r\n%@",
+												 [contextLines objectForKey:address],infoString]];
 	[tableView reloadData];
 }
 
@@ -99,6 +102,7 @@
 - (void)processMailText
 {
 	// clear out table view
+	[contextLines removeAllObjects];
 	[addresses removeAllObjects];
 	[info removeAllObjects];
 	[tableView reloadData];
@@ -124,7 +128,10 @@
 				[obj rangeOfCharacterFromSet:period options:NSBackwardsSearch].location-[obj rangeOfCharacterFromSet:period].location>4 &&
 				![alreadySeen objectForKey:obj])
 			{
-				[alreadySeen setObject:line forKey:obj];
+				[alreadySeen setObject:line forKey:obj];			// already seen
+				[contextLines setObject:line forKey:obj];			// tag context where address was parsed from
+				[addresses addObject:obj];							// address lets us keep ordering same as headers
+				[info addObject:[NSString stringWithFormat:@"%@\r\n%@",line,@"[Not yet resolved]"]];
 				[lookup resolveAddress:obj delegate:self];
 			}
 		}];

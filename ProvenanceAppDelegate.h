@@ -21,6 +21,8 @@
 	NSMutableArray	*addresses;
 	NSMutableArray	*info;
 	
+	NSMutableDictionary	*contextLines;
+
     NSWindow	*window;
 	NSTableView	*tableView;
 	NSImageView	*dropTarget;
@@ -30,6 +32,8 @@
 @property (retain) IBOutlet NSMutableArray	*addresses;
 @property (retain) IBOutlet NSMutableArray	*info;
 
+// map found addresses to mail header lines for context
+@property (retain) IBOutlet NSMutableDictionary	*contextLines;
 
 
 
